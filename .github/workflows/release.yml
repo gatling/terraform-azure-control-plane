@@ -1,0 +1,65 @@
+name: Release
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 'Bump type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - build
+          - milestone
+          - calver
+          - calver-milestone
+
+permissions:
+  contents: write
+
+jobs:
+  version-bump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Run Version Bump Action
+        uses: gatling/private-actions@version-bump/v1
+        id: version
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          prefix: 'v'
+          repo: ${{ github.repository }}
+          bump: ${{ inputs.bump || 'patch' }}
+
+      - name: Create and Push Tag
+        env:
+          NEXT_TAG: ${{ steps.version.outputs.next-tag }}
+          NEXT_VERSION: ${{ steps.version.outputs.next-version }}
+        run: |
+          echo "The next tag is $NEXT_TAG"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "$NEXT_TAG" -m "Release $NEXT_VERSION"
+          git push origin "$NEXT_TAG"
+
+      - name: Create GitHub Release
+        if: ${{ !contains(inputs.bump, 'milestone') }}
+        env:
+          NEXT_TAG: ${{ steps.version.outputs.next-tag }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "$NEXT_TAG" --title "$NEXT_TAG" --notes-file RELEASENOTE.md
+
+      - name: Reset Changelog
+        if: ${{ !contains(inputs.bump, 'milestone') }}
+        env:
+          NEXT_VERSION: ${{ steps.version.outputs.next-version }}
+        run: |
+          printf 'No changes\n' > RELEASENOTE.md
+          git add RELEASENOTE.md
+          git diff --staged --quiet || git commit -m "chore: reset changelog after $NEXT_VERSION"
+          git push

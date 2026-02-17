@@ -1,0 +1,23 @@
+name: Terraform CI/CD
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  detect:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform formatting
+        run: terraform fmt -check -recursive
+
+      - name: Terraform validate
+        run: |
+          terraform init -backend=false
+          terraform validate
