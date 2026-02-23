@@ -5,7 +5,7 @@ provider "azurerm" {
 # Create a control plane based on Azure Container App
 # Reference: https://docs.gatling.io/reference/install/cloud/private-locations/azure/installation/
 module "control-plane" {
-  source              = "git::https://github.com/gatling/terraform-azure-control-plane"
+  source              = "gatling/control-plane/azure"
   name                = "<Name>"
   description         = "My Azure control plane description"
   vault-name          = "<Vault>"
