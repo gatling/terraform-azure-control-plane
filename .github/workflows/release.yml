@@ -9,25 +9,24 @@ on:
         type: choice
         options:
           - patch
+          - patch-milestone
           - minor
+          - minor-milestone
           - major
-          - build
-          - milestone
-          - calver
-          - calver-milestone
+          - major-milestone
 
 permissions:
   contents: write
 
 jobs:
-  version-bump:
+  release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
 
       - name: Run Version Bump Action
-        uses: gatling/private-actions@version-bump/v1
+        uses: gatling/private-actions@version-bump/v1.0.3
         id: version
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}

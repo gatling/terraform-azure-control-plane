@@ -1,4 +1,4 @@
-name: Terraform CI/CD
+name: Build Terraform
 
 on:
   pull_request:
@@ -6,8 +6,8 @@ on:
       - main
 
 jobs:
-  detect:
-    name: Test
+  build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
