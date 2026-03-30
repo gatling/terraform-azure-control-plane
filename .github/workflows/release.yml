@@ -17,6 +17,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   release:
@@ -57,8 +58,18 @@ jobs:
         if: ${{ !contains(inputs.bump, 'milestone') }}
         env:
           NEXT_VERSION: ${{ steps.version.outputs.next-version }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           printf 'No changes\n' > RELEASENOTE.md
+          git diff --quiet && exit 0
+          
+          BRANCH="chore/reset-changelog-after-$NEXT_VERSION"
           git add RELEASENOTE.md
-          git diff --staged --quiet || git commit -m "chore: reset changelog after $NEXT_VERSION"
-          git push
+          git commit -m "chore: reset changelog after $NEXT_VERSION"
+          git push --force origin HEAD:refs/heads/"$BRANCH"
+          
+          gh pr create \
+            --head "$BRANCH" \
+            --title "chore: reset changelog after $NEXT_VERSION" \
+            --body "Automated changelog reset after release $NEXT_VERSION." \
+            || echo "PR already exists, updated with force push"
