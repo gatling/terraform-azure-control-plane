@@ -51,7 +51,7 @@ resource "azurerm_role_assignment" "gatling_custom_role_assignment" {
 }
 
 resource "azurerm_role_assignment" "gatling_storage_contributor" {
-  count                = local.private-package != null > 0 ? 1 : 0
+  count                = local.private-package != null ? 1 : 0
   scope                = data.azurerm_subscription.current.id
   role_definition_name = "Storage Blob Data Contributor"
   principal_id         = azurerm_user_assigned_identity.gatling_identity.principal_id
