@@ -26,10 +26,10 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Run Version Bump Action
-        uses: gatling/private-actions@version-bump/v1.0.3
+        uses: gatling/internal-actions@version-bump/v1
         id: version
         with:
-          github-token: ${{ secrets.GATLING_CI_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           prefix: 'v'
           repo: ${{ github.repository }}
           bump: ${{ inputs.bump || 'patch' }}
