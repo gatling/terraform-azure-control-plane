@@ -25,6 +25,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GATLING_CI_TOKEN }}
 
       - name: Run Version Bump Action
         uses: gatling/internal-actions@version-bump/v1
@@ -56,20 +58,8 @@ jobs:
 
       - name: Reset Changelog
         if: ${{ !contains(inputs.bump, 'milestone') }}
-        env:
-          NEXT_VERSION: ${{ steps.version.outputs.next-version }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          printf 'No changes\n' > RELEASENOTE.md
-          git diff --quiet && exit 0
-          
-          BRANCH="chore/reset-changelog-after-$NEXT_VERSION"
-          git add RELEASENOTE.md
-          git commit -m "chore: reset changelog after $NEXT_VERSION"
-          git push --force origin HEAD:refs/heads/"$BRANCH"
-          
-          gh pr create \
-            --head "$BRANCH" \
-            --title "chore: reset changelog after $NEXT_VERSION" \
-            --body "Automated changelog reset after release $NEXT_VERSION." \
-            || echo "PR already exists, updated with force push"
+          echo "No changes" > CHANGELOG.md
+          git add CHANGELOG.md
+          git commit -m "chore: reset CHANGELOG.md after release"
+          git push
