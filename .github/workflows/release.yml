@@ -29,7 +29,7 @@ jobs:
           token: ${{ secrets.GATLING_CI_TOKEN }}
 
       - name: Run Version Bump Action
-        uses: gatling/internal-actions@version-bump/v1
+        uses: gatling/internal-actions@version-bump/v1.0.1
         id: version
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
