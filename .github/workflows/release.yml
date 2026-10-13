@@ -54,7 +54,7 @@ jobs:
           NEXT_TAG: ${{ steps.version.outputs.next-tag }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "$NEXT_TAG" --title "$NEXT_TAG" --notes-file RELEASENOTE.md
+          gh release create "$NEXT_TAG" --title "$NEXT_TAG" --notes-file CHANGELOG.md
 
       - name: Reset Changelog
         if: ${{ !contains(inputs.bump, 'milestone') }}
