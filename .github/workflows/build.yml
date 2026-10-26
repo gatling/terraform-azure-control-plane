@@ -1,4 +1,4 @@
-name: Build Terraform
+name: Build
 
 on:
   pull_request:
